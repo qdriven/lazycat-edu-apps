@@ -1,0 +1,33 @@
+# ============================================================
+# DeepTutor · 懒猫微服运行结构（lzc-manifest.yml）
+#
+# 设计依据（上游官方容器实践）：
+#   * 官方一体化镜像 ghcr.io/hkuds/deeptutor（amd64 + arm64 双架构），
+#     容器内 supervisord 同跑 FastAPI(:8001) + Next.js(:3782)。
+#   * 前端 web/proxy.ts 在【请求时】把 /api/*、/ws/* 转发到后端，
+#     无构建期 API 地址 —— 因此只需对懒猫暴露 3782 一个 HTTP 路由。
+#   * 全部状态（设置 / 知识库索引 / 用户 / 记忆 / 书籍）在 /app/data
+#     一棵目录树下，整体映射到 /lzcapp/var/data 即可备份迁移。
+#   * LLM / Embedding 均为出站远程 API 调用，盒子无需 GPU；
+#     首次打开后在 Settings → Models 图形化配置即可。
+# ============================================================
+services:
+  deeptutor:
+    # 官方镜像（构建 LPK 时可用 lzc-cli appstore copy-image 同步至懒猫 Registry，
+    # 详见 docs/DEPLOY-GUIDE.md；也可直接引用 ghcr 地址由盒子拉取）
+    image: ghcr.io/hkuds/deeptutor:latest
+    environment:
+      - TZ=Asia/Shanghai
+      # 端口保持镜像默认；运行时配置（端口/认证/模型）由镜像 entrypoint
+      # 从 /app/data/user/settings/*.json 读取，改 JSON 后重启应用生效
+      - BACKEND_PORT=8001
+      - FRONTEND_PORT=3782
+    binds:
+      # 唯一数据树：备份 / 换机迁移只需这一个目录
+      - /lzcapp/var/data:/app/data
+
+application:
+  route:
+    # 懒猫 HTTP 路由：应用域名根路径 → 容器内 Next.js 前端
+    # 后端 :8001 不对外，由前端请求时代理，外部无需直达
+    - /=http://127.0.0.1:3782

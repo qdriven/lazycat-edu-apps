@@ -1,0 +1,10 @@
+# DeepTutor 懒猫微服应用 · 静态元数据（LPK V2）
+name: DeepTutor
+package: cloud.lazycat.app.deeptutor
+version: 1.5.10
+description: >-
+  Agent 原生的个性化学习工作台：多引擎 RAG 知识库（LlamaIndex/FAISS+BM25、
+  GraphRAG、LightRAG）、教程生成（Book）、掌握度学习与测验。上游：
+  HKUDS/DeepTutor（Apache-2.0）。
+author: HKUDS（懒猫打包：qdriven）
+homepage: https://github.com/HKUDS/DeepTutor

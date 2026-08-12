@@ -1,0 +1,3 @@
+# DeepTutor 懒猫 LPK 构建脚本
+pkgout: ./
+icon: ./icon.png

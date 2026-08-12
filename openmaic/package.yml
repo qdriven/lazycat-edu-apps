@@ -1,0 +1,10 @@
+# OpenMAIC 懒猫微服应用 · 静态元数据（LPK V2）
+name: OpenMAIC
+package: cloud.lazycat.app.openmaic
+version: 0.1.0
+description: >-
+  AI 驱动的互动课程生成与课堂工具：多课连排自动生成、自动播放流水线、
+  多 LLM Provider 支持、SenseAudio TTS。上游：JoeyMyMan/OpenMAIC4course
+  （AGPL-3.0）。
+author: JoeyMyMan（懒猫打包：qdriven）
+homepage: https://github.com/JoeyMyMan/OpenMAIC4course

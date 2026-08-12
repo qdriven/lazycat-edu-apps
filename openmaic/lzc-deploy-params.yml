@@ -1,0 +1,22 @@
+# OpenMAIC 安装期部署参数（全部可选，留空则进应用后再配置）
+params:
+  - id: openai_api_key
+    type: string
+    name: "OpenAI API Key"
+    description: "OpenAI 或 OpenAI 兼容网关的 API Key（可选）"
+    optional: true
+  - id: openai_base_url
+    type: string
+    name: "OpenAI Base URL"
+    description: "OpenAI 兼容网关地址，如 https://api.openai.com/v1（可选）"
+    optional: true
+  - id: deepseek_api_key
+    type: string
+    name: "DeepSeek API Key"
+    description: "DeepSeek 的 API Key（可选）"
+    optional: true
+  - id: qwen_api_key
+    type: string
+    name: "通义千问 API Key"
+    description: "Qwen / DashScope 的 API Key（可选）"
+    optional: true
