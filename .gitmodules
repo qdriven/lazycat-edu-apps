@@ -1,0 +1,8 @@
+[submodule "upstream/DeepTutor"]
+	path = upstream/DeepTutor
+	url = https://github.com/qdriven/DeepTutor.git
+	branch = main
+[submodule "upstream/OpenMAIC4course"]
+	path = upstream/OpenMAIC4course
+	url = https://github.com/JoeyMyMan/OpenMAIC4course.git
+	branch = main

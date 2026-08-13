@@ -13,9 +13,8 @@
 # ============================================================
 services:
   deeptutor:
-    # 官方镜像（构建 LPK 时可用 lzc-cli appstore copy-image 同步至懒猫 Registry，
-    # 详见 docs/DEPLOY-GUIDE.md；也可直接引用 ghcr 地址由盒子拉取）
-    image: ghcr.io/hkuds/deeptutor:latest
+    # 官方镜像【版本锁定】（GHCR tag 无 v 前缀）；升级时改这里 + versions.env
+    image: ghcr.io/hkuds/deeptutor:1.5.10
     environment:
       - TZ=Asia/Shanghai
       # 端口保持镜像默认；运行时配置（端口/认证/模型）由镜像 entrypoint

@@ -20,15 +20,15 @@
 ## 2. 本仓库的修改内容
 
 ```text
-postgres/                        # 【新增】共享 PostgreSQL LPK 应用
+apps/postgres/                   # 【新增】共享 PostgreSQL LPK 应用
 ├── package.yml                  #   cloud.lazycat.app.edu-postgres
 ├── lzc-manifest.yml             #   postgres:16-alpine，密码 stable_secret 生成
 ├── lzc-build.yml
 └── icon.png
 
-deeptutor/lzc-manifest.yml       # 【修改】新增注释掉的可选 env：
+apps/deeptutor/lzc-manifest.yml  # 【修改】新增注释掉的可选 env：
                                  #   DEEPTUTOR_DATABASE_URL=postgresql://edu:<密码>@127.0.0.1:5432/edu_deeptutor
-openmaic/lzc-manifest.yml        # 【修改】新增注释掉的可选 env：
+apps/openmaic/lzc-manifest.yml   # 【修改】新增注释掉的可选 env：
                                  #   DATABASE_URL=postgresql://edu:<密码>@127.0.0.1:5432/edu_openmaic
 docs/POSTGRES-SHARED.md          # 【新增】本文
 ```
@@ -52,7 +52,7 @@ docs/POSTGRES-SHARED.md          # 【新增】本文
 懒猫应用容器共享宿主机网络，跨应用用 `127.0.0.1:5432` 直连即可，
 PG 不需要任何对外路由/端口暴露。
 
-> 备选拓扑：① 若你已有外部 PG（NAS、云 RDS），跳过 postgres/ 应用，
+> 备选拓扑：① 若你已有外部 PG（NAS、云 RDS），跳过 apps/postgres/ 应用，
 > 直接把两个 env 指向外部地址；② 若想要单一大应用，把 postgres service
 > 合并进任一 manifest 组成组合 LPK，失去独立安装灵活性，不推荐。
 
@@ -61,10 +61,10 @@ PG 不需要任何对外路由/端口暴露。
 ```bash
 # 1. 同步官方镜像到懒猫 Registry（多架构，arm64/x86 均可）
 lzc-cli appstore copy-image postgres:16-alpine
-#    如需，把 postgres/lzc-manifest.yml 的 image 改为输出的懒猫 Registry 地址
+#    如需，把 apps/postgres/lzc-manifest.yml 的 image 改为输出的懒猫 Registry 地址
 
 # 2. 打包安装
-cd postgres
+cd apps/postgres
 lzc-cli project build -o edu-postgres.lpk
 lzc-cli lpk install ./edu-postgres.lpk
 
@@ -118,16 +118,16 @@ PG 里只存元数据（KB 清单、版本、manifest 已有 JSON 可后续再�
 ```bash
 # 1. 用 fork 源码构建镜像（标签建议加 -pg 区分）
 docker build -t <你>/deeptutor:1.5.10-pg .          # 在 DeepTutor fork 根目录
-docker build -f openmaic/Dockerfile -t <你>/openmaic:0.1.0-pg .   # 在 OpenMAIC fork 根目录
+docker build -f apps/openmaic/Dockerfile -t <你>/openmaic:0.1.0-pg upstream/OpenMAIC4course
 lzc-cli appstore copy-image <你>/deeptutor:1.5.10-pg
 lzc-cli appstore copy-image <你>/openmaic:0.1.0-pg
 
 # 2. 改 manifest：image 换成 fork 镜像，取消 PG env 注释并填入第 3 节的密码
-#    deeptutor/lzc-manifest.yml → DEEPTUTOR_DATABASE_URL=postgresql://edu:<密码>@127.0.0.1:5432/edu_deeptutor
-#    openmaic/lzc-manifest.yml  → DATABASE_URL=postgresql://edu:<密码>@127.0.0.1:5432/edu_openmaic
+#    apps/deeptutor/lzc-manifest.yml → DEEPTUTOR_DATABASE_URL=postgresql://edu:<密码>@127.0.0.1:5432/edu_deeptutor
+#    apps/openmaic/lzc-manifest.yml  → DATABASE_URL=postgresql://edu:<密码>@127.0.0.1:5432/edu_openmaic
 
 # 3. 重新打包安装（数据目录原地保留）
-cd deeptutor && lzc-cli project build -o deeptutor.lpk && lzc-cli lpk install ./deeptutor.lpk
+cd apps/deeptutor && lzc-cli project build -o deeptutor.lpk && lzc-cli lpk install ./deeptutor.lpk
 cd ../openmaic && lzc-cli project build -o openmaic.lpk && lzc-cli lpk install ./openmaic.lpk
 ```
 
