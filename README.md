@@ -8,6 +8,13 @@
 |---|---|---|---|---|---|
 | **DeepTutor** v1.5.10 | [`deeptutor/`](./deeptutor) | HKUDS/DeepTutor（Apache-2.0） | 官方 `ghcr.io/hkuds/deeptutor`（amd64+arm64） | `:3782`（前后端一体，后端请求时代理） | `/lzcapp/var/data` → `/app/data` |
 | **OpenMAIC** v0.1.0 | [`openmaic/`](./openmaic) | JoeyMyMan/OpenMAIC4course（AGPL-3.0） | 本仓库 `openmaic/Dockerfile` 自行构建 | `:3000`（Next.js standalone） | `/lzcapp/var/data` → `/app/data` |
+| **Edu PostgreSQL** 16 | [`postgres/`](./postgres) | postgres:16-alpine 官方镜像 | 官方多架构镜像 | 无 HTTP 路由，内部 `:5432` | `/lzcapp/var/pgdata` |
+
+> **共享 PostgreSQL**：`postgres/` 提供两个应用共用的数据库实例；两个应用的
+> manifest 中已预留 PG 连接环境变量（注释状态）。注意官方镜像本身不使用 PG
+> （DeepTutor 是文件+SQLite 数据面，OpenMAIC 数据在浏览器 IndexedDB），
+> 真正启用需要对应的 fork 版本，完整分析与改造点见
+> **[docs/POSTGRES-SHARED.md](./docs/POSTGRES-SHARED.md)**。
 
 ## 快速开始
 

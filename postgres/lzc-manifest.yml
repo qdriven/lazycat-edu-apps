@@ -1,0 +1,35 @@
+# ============================================================
+# 共享 PostgreSQL · 懒猫微服运行结构
+#
+# 拓扑：独立安装的共享数据库应用，DeepTutor / OpenMAIC（PG fork 版）
+# 通过盒子内部地址 127.0.0.1:5432 连接（懒猫应用容器共享宿主机网络，
+# 跨应用 loopback 直连即可，无需对外暴露端口）。
+#
+# 安全：密码由懒猫 stable_secret 在安装时生成并持久稳定，
+# 不写在任何配置文件中；可用 lzc-cli project exec 进入容器后
+#   env | grep POSTGRES_PASSWORD
+# 查看，或在部署参数中改为自定密码。
+# ============================================================
+services:
+  postgres:
+    image: postgres:16-alpine   # 官方多架构镜像（amd64 + arm64）
+    environment:
+      - TZ=Asia/Shanghai
+      - POSTGRES_USER=edu
+      # stable_secret：同一盒子同一应用内稳定，重装不变
+      - POSTGRES_PASSWORD={{ stable_secret "edu_pg_password" }}
+      - POSTGRES_DB=edu
+      # 只监听必要地址；懒猫 host 网络下 127.0.0.1 即可跨应用互通
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    binds:
+      # 独立数据目录，与应用数据分离，可单独备份
+      - /lzcapp/var/pgdata:/var/lib/postgresql/data
+
+application:
+  # 无 HTTP 界面，不配置 route。
+  # 如需从局域网其他机器（如开发机）直连调试，取消下面 ingress 注释：
+  # ingress:
+  #   - protocol: tcp
+  #     listen: 5432
+  #     target: 5432
+  route: []

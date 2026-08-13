@@ -1,0 +1,10 @@
+# 共享 PostgreSQL 懒猫微服应用 · 静态元数据（LPK V2）
+name: Edu PostgreSQL
+package: cloud.lazycat.app.edu-postgres
+version: 16.4.0
+description: >-
+  DeepTutor 与 OpenMAIC 共用的 PostgreSQL 16 数据库服务。
+  数据落盘 /lzcapp/var/pgdata，密码由懒猫 stable_secret 生成。
+  供本仓库 edu-suite 组合版或两个应用的 fork（PG 支持版）连接。
+author: qdriven
+homepage: https://www.postgresql.org

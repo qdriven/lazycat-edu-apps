@@ -22,6 +22,10 @@ services:
       # 从 /app/data/user/settings/*.json 读取，改 JSON 后重启应用生效
       - BACKEND_PORT=8001
       - FRONTEND_PORT=3782
+      # ---- 可选：共享 PostgreSQL（需配合 PG fork 版镜像，见 docs/POSTGRES-SHARED.md）
+      # 官方镜像不读取此变量；fork 版将会话/记忆快照/账户从 SQLite 切换到 PG。
+      # 先安装本仓库 postgres/ 共享库应用，再取消下行注释：
+      # - DEEPTUTOR_DATABASE_URL=postgresql://edu:<密码>@127.0.0.1:5432/edu_deeptutor
     binds:
       # 唯一数据树：备份 / 换机迁移只需这一个目录
       - /lzcapp/var/data:/app/data

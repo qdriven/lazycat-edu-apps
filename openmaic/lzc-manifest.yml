@@ -23,6 +23,10 @@ services:
       - OPENAI_BASE_URL={{ .U.openai_base_url | default "" }}
       - DEEPSEEK_API_KEY={{ .U.deepseek_api_key | default "" }}
       - QWEN_API_KEY={{ .U.qwen_api_key | default "" }}
+      # ---- 可选：共享 PostgreSQL（需配合 PG fork 版镜像，见 docs/POSTGRES-SHARED.md）
+      # 原版 OpenMAIC 课程数据存在浏览器 IndexedDB（Dexie），服务端无数据库，
+      # 官方镜像不读取此变量；fork 版新增服务端课程 API 后取消下行注释：
+      # - DATABASE_URL=postgresql://edu:<密码>@127.0.0.1:5432/edu_openmaic
     binds:
       - /lzcapp/var/data:/app/data
 

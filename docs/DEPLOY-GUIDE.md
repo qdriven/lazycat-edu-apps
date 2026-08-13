@@ -163,14 +163,47 @@ lzc-cli lpk install ./openmaic.lpk
 deeptutor/
 ├── package.yml           # LPK V2 元数据（name/package/version）
 ├── lzc-manifest.yml      # 运行结构：1 个 service + HTTP 路由 :3782 + 数据挂载
+│                         #   （含注释掉的共享 PG env：DEEPTUTOR_DATABASE_URL）
 ├── lzc-build.yml         # 构建脚本（pkgout + icon）
 └── icon.png              # 512×512 应用图标
 
 openmaic/
 ├── package.yml
 ├── lzc-manifest.yml      # 1 个 service + HTTP 路由 :3000 + 数据挂载 + 安装期参数渲染
+│                         #   （含注释掉的共享 PG env：DATABASE_URL）
 ├── lzc-build.yml
 ├── lzc-deploy-params.yml # 安装期可选 LLM 参数（OpenAI/DeepSeek/Qwen）
 ├── Dockerfile            # 上游 Dockerfile 副本（预建 /app/data）
 └── icon.png
+
+postgres/                 # 【可选】共享 PostgreSQL 应用
+├── package.yml           # cloud.lazycat.app.edu-postgres
+├── lzc-manifest.yml      # postgres:16-alpine，stable_secret 密码，内部 :5432
+├── lzc-build.yml
+└── icon.png
 ```
+
+## 6.（可选）共享 PostgreSQL
+
+让 DeepTutor 与 OpenMAIC 共用本仓库 `postgres/` 提供的数据库实例：
+
+```bash
+# 1. 安装共享 PG
+lzc-cli appstore copy-image postgres:16-alpine
+cd postgres && lzc-cli project build -o edu-postgres.lpk
+lzc-cli lpk install ./edu-postgres.lpk
+
+# 2. 取密码、建库
+lzc-cli project exec -- env | grep POSTGRES_PASSWORD
+lzc-cli project exec -- psql -U edu -d edu \
+  -c "CREATE DATABASE edu_deeptutor;" -c "CREATE DATABASE edu_openmaic;"
+
+# 3. 两个应用换成 PG fork 版镜像后，取消各自 manifest 中 PG env 的注释，
+#    重新打包安装
+```
+
+⚠️ **重要前提**：官方镜像**不读** `DATABASE_URL`——DeepTutor 是文件+SQLite
+数据面，OpenMAIC 数据在浏览器 IndexedDB。共用 PG 需要两个应用的 fork 版本
+真正接入数据库，精确的代码改造点（DeepTutor 的 `sqlite_store.py` / 认证存储、
+OpenMAIC 的 Dexie → 服务端 API）、数据迁移与备份策略，全部见
+**[POSTGRES-SHARED.md](./POSTGRES-SHARED.md)**。
